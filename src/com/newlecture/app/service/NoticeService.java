@@ -11,15 +11,26 @@ public class NoticeService {
     private  String url = "jdbc:oracle:thin:@220.94.153.57:1521/xepdb1";
     private String uid = "newlec";
     private String pwd = "dlsxo123";
-    public List<Notice> getList() throws ClassNotFoundException, SQLException {
+    public List<Notice> getList(int page, String field, String query) throws ClassNotFoundException, SQLException ,NullPointerException{
+
+        int start =1 + (page-1)*10;
+        int end =10*page;
 
         String url = "jdbc:oracle:thin:@220.94.153.57:1521/xepdb1";
-        String sql = "SELECT * FROM notice WHERE HIT <10";
+        String sql = "select * from (" +
+                "select rownum num,n.* from (" +
+                "select * from notice order by regdate desc" +
+                ") n" +
+                ") " +
+                "where "+field+" like ? and num between ? and ?";
 
         Class.forName("oracle.jdbc.driver.OracleDriver");
         Connection con = DriverManager.getConnection(url, uid, pwd);
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(sql);
+        PreparedStatement st = con.prepareStatement(sql);
+        st.setString(1, "%"+query+"%");
+        st.setInt(2,start);
+        st.setInt(3,end);
+        ResultSet rs = st.executeQuery();
 
         List<Notice> list = new ArrayList<Notice>();
 
@@ -41,6 +52,24 @@ public class NoticeService {
         st.close();
         con.close();
         return list;
+    }
+    public int getCount() throws ClassNotFoundException, SQLException {
+        int count =0;
+        String sql = "select count(id) count from notice";
+
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        Connection con = DriverManager.getConnection(url, uid, pwd);
+        Statement st = con.createStatement();
+
+        ResultSet rs = st.executeQuery(sql);
+
+        if(rs.next()) {
+            count = rs.getInt("count");
+                  }
+        rs.close();
+        st.close();
+        con.close();
+        return count;
     }
 
  public  int insert(Notice notice) throws SQLException, ClassNotFoundException {
@@ -126,4 +155,6 @@ public class NoticeService {
         con.close();
         return result;
     }
+
+
 }
