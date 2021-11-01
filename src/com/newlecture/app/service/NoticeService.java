@@ -73,26 +73,26 @@ public class NoticeService {
     }
 
  public  int insert(Notice notice) throws SQLException, ClassNotFoundException {
-     String title =notice.getTitle();
-     String writerId = notice.getWriterld();
-     String content = notice.getContent();
-     String files = notice.getFiles();
+        int id = notice.getId();
+        String title =notice.getTitle();
+        String writerId = notice.getWriterld();
+        Date regdate = notice.getRegDate();
      String url = "jdbc:oracle:thin:@220.94.153.57:1521/xepdb1";
      String sql = "insert into notice(" +
+             "id," +
              "title," +
-             "writer_id," +
-             "content," +
-             "files)" +
+             "writerId," +
+             "regdate)" +
              "VALUES(?,?,?,?)";
 
      Class.forName("oracle.jdbc.driver.OracleDriver");
      Connection con = DriverManager.getConnection(url, uid, pwd);
      //Statement st = con.createStatement();
      PreparedStatement st = con.prepareStatement(sql);
-     st.setString(1,title);
-     st.setString(2,writerId);
-     st.setString(3,content);
-     st.setString(4,files);
+     st.setInt(1,id);
+     st.setString(2,title);
+     st.setString(3,writerId);
+     st.setDate(4, (java.sql.Date) regdate);
 
      int  result = st.executeUpdate();
 

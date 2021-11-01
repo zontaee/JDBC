@@ -1,12 +1,10 @@
 package jdbc_2;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
 
-public class InsertTest7 {
+public class InsertTest8 {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
        Connection con = DaoConnector.getInstance().getConnection();
 
